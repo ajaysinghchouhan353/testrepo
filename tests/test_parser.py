@@ -25,7 +25,7 @@ A medium shot of him sitting at a desk.
         encoding="utf-8",
     )
 
-    scenes = parse_storyboard(file)
+    scenes = parse_storyboard(file.read_text(encoding="utf-8"))
     assert len(scenes) == 2
     assert scenes[0].segment_number == 1
     assert "office" in scenes[0].script

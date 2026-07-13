@@ -1,13 +1,11 @@
 import re
-from pathlib import Path
 from omas.models import Scene
 
 
 SEGMENT_PATTERN = re.compile(r"^Segment\s+(\d+)\s*$", re.IGNORECASE)
 
 
-def parse_storyboard(path: Path) -> list[Scene]:
-    content = path.read_text(encoding="utf-8")
+def parse_storyboard(content: str) -> list[Scene]:
     lines = content.splitlines()
     scenes: list[Scene] = []
 

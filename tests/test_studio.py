@@ -23,7 +23,7 @@ Cinematic clip.
 
     settings = Settings(project_root=project)
     studio = OMASStudio(settings)
-    scenes, errors = studio.load_storyboard(storyboard)
+    scenes, errors = studio.load_storyboard()
     assert len(scenes) == 1
     assert errors == []
 
@@ -47,6 +47,6 @@ Cinematic clip.
 
     settings = Settings(project_root=project)
     studio = OMASStudio(settings)
-    result = studio.generate_sync(AssetMode.IMAGE, storyboard)
+    result = studio.generate_sync(AssetMode.IMAGE)
     assert result["status"] == "ok"
     assert (settings.images_dir / "1.jpg").exists()

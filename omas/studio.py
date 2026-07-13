@@ -17,20 +17,34 @@ from omas.validator import validate_scenes
 class OMASStudio:
     def __init__(self, settings: Settings) -> None:
         self.settings = settings
+        ensure_directories(settings)
         self.providers = ProviderRegistry()
         self.continuity = ContinuityEngine()
         self.db = Database(settings.database_dir / "omas.db")
         self.db.init()
-        ensure_directories(settings)
 
-    def load_storyboard(self, storyboard_path: Path | None = None):
-        path = storyboard_path or (self.settings.project_root / self.settings.storyboard_file)
-        scenes = parse_storyboard(path)
+    def load_storyboard(self):
+        path = self.settings.project_root / self.settings.storyboard_file
+        text = self._read_storyboard(path)
+        scenes = parse_storyboard(text)
         errors = validate_scenes(scenes)
         return scenes, errors
 
-    async def generate(self, mode: AssetMode, storyboard_path: Path | None = None) -> dict:
-        scenes, errors = self.load_storyboard(storyboard_path)
+    def _read_storyboard(self, path: Path) -> str:
+        resolved = path.expanduser().resolve(strict=True)
+        root = self.settings.project_root.expanduser().resolve(strict=True)
+        if resolved.suffix.lower() not in {".md", ".txt"}:
+            raise ValueError("Storyboard file must be .md or .txt")
+        if not resolved.is_file():
+            raise ValueError("Storyboard path must be a file")
+        try:
+            resolved.relative_to(root)
+        except ValueError as exc:
+            raise ValueError("Storyboard path must be inside project root") from exc
+        return resolved.read_text(encoding="utf-8")
+
+    async def generate(self, mode: AssetMode) -> dict:
+        scenes, errors = self.load_storyboard()
         if errors:
             return {"status": "error", "errors": errors}
 
@@ -74,5 +88,5 @@ class OMASStudio:
             "start_at": start_at,
         }
 
-    def generate_sync(self, mode: AssetMode, storyboard_path: Path | None = None) -> dict:
-        return asyncio.run(self.generate(mode, storyboard_path))
+    def generate_sync(self, mode: AssetMode) -> dict:
+        return asyncio.run(self.generate(mode))
