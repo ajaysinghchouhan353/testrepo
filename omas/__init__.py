@@ -1,0 +1,1 @@
+"""OMAS package."""
