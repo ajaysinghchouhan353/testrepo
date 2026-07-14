@@ -29,3 +29,4 @@ A medium shot of him sitting at a desk.
     assert len(scenes) == 2
     assert scenes[0].segment_number == 1
     assert "office" in scenes[0].script
+    assert "tracking shot" in scenes[0].video_prompt

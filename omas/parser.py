@@ -36,6 +36,7 @@ def parse_storyboard(content: str) -> list[Scene]:
             elif current_section == "video":
                 video_prompt = text
             section_lines = []
+            current_section = None
             return script, image_prompt, video_prompt
 
         while idx < len(lines):
