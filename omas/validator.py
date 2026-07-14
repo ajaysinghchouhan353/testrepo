@@ -6,7 +6,7 @@ def validate_scenes(scenes: list[Scene]) -> list[str]:
     seen: set[int] = set()
     expected = 1
 
-    for scene in sorted(scenes, key=lambda s: s.segment_number):
+    for scene in scenes:
         if scene.segment_number in seen:
             errors.append(f"Duplicate scene number: {scene.segment_number}")
         seen.add(scene.segment_number)
